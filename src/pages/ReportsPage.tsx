@@ -57,10 +57,10 @@ export default function ReportsPage() {
       </section>
 
       <section className="mt-10">
-        <h2 className="font-display text-lg font-semibold text-slate-900 mb-4">Revenue (completed bookings)</h2>
+        <h2 className="font-display text-lg font-semibold text-slate-900 mb-4">Revenue</h2>
         <div className="rounded-xl border border-slate-200 bg-white p-6">
           <p className="font-display text-3xl font-bold text-slate-900">${revenueCompleted.toLocaleString()}</p>
-          <p className="text-sm text-slate-500 mt-1">Sum of total price for all completed rentals</p>
+          <p className="text-sm text-slate-500 mt-1">From completed rentals only (when the car is returned and booking is marked completed)</p>
         </div>
       </section>
 

@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { getFleet } from '../lib/fleet'
+import { isCarAvailableForDates } from '../lib/bookings'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { CAR_TYPE_LABELS } from '../data/cars'
 import type { CarType } from '../types/car'
@@ -107,13 +108,18 @@ export default function CarListingPage() {
     setLocalPriceMax(priceMax ?? '')
   }, [typeFilter, priceMax])
 
+  const pickupFromUrl = searchParams.get('pickupDate') ?? ''
+  const returnFromUrl = searchParams.get('returnDate') ?? ''
+  const hasDateFilter = pickupFromUrl && returnFromUrl
+
   const filteredCars = useMemo(() => {
     return getFleet().filter((car) => {
       if (localType && car.type !== localType) return false
       if (localPriceMax !== '' && car.pricePerDay > Number(localPriceMax)) return false
+      if (hasDateFilter && !isCarAvailableForDates(car.id, pickupFromUrl, returnFromUrl)) return false
       return true
     })
-  }, [localType, localPriceMax])
+  }, [localType, localPriceMax, hasDateFilter, pickupFromUrl, returnFromUrl])
 
   function applyFilters() {
     const next = new URLSearchParams(searchParams)
@@ -207,6 +213,11 @@ export default function CarListingPage() {
         </aside>
 
         <div className="flex-1 min-w-0">
+          {hasDateFilter && (
+            <p className="text-sm text-slate-500 mb-2">
+              Showing vehicles available {pickupFromUrl} → {returnFromUrl}
+            </p>
+          )}
           <p className="text-slate-600 mb-4">
             {filteredCars.length} car{filteredCars.length !== 1 ? 's' : ''} found
           </p>

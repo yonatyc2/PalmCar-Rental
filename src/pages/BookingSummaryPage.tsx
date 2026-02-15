@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { getCarById } from '../lib/fleet'
 import { CAR_TYPE_LABELS } from '../data/cars'
 import { useAuth } from '../context/AuthContext'
-import { saveBooking } from '../lib/bookings'
+import { saveBooking, isCarAvailableForDates } from '../lib/bookings'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import type { Booking } from '../types/car'
 
@@ -30,6 +30,7 @@ export default function BookingSummaryPage() {
   const [returnLocation, setReturnLocation] = useState('')
   const [pickupDate, setPickupDate] = useState('')
   const [returnDate, setReturnDate] = useState('')
+  const [availabilityError, setAvailabilityError] = useState('')
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -56,7 +57,12 @@ export default function BookingSummaryPage() {
 
   function handleConfirm(e: React.FormEvent) {
     e.preventDefault()
+    setAvailabilityError('')
     if (!car) return
+    if (!isCarAvailableForDates(car.id, pickupDate, returnDate)) {
+      setAvailabilityError('This vehicle is not available for the selected dates. It may already be booked.')
+      return
+    }
     const booking: Booking = {
       car,
       pickupLocation: pickupLocation || 'To be confirmed',
@@ -105,6 +111,11 @@ export default function BookingSummaryPage() {
         </div>
 
         <form onSubmit={handleConfirm} className="p-6 space-y-4">
+          {availabilityError && (
+            <div className="rounded-lg bg-red-50 text-red-700 px-4 py-3 text-sm">
+              {availabilityError}
+            </div>
+          )}
           <div>
             <label htmlFor="pickup" className="block text-sm font-medium text-slate-700 mb-1">
               Pick-up location

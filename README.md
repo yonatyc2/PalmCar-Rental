@@ -39,3 +39,14 @@ git push -u origin main
 ```
 
 If the repo name has a space, use: `https://github.com/YOUR_GITHUB_USERNAME/PalmCar%20Rental.git`
+
+## Deploy on Netlify
+
+1. Push this repo to GitHub (see above).
+2. Log in at [netlify.com](https://www.netlify.com) → **Add new site** → **Import an existing project**.
+3. Connect **GitHub** and choose the **PalmCar-Rental** repository.
+4. Netlify will use the repo’s `netlify.toml`:
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+5. Click **Deploy site**. The app will be live at a URL like `https://random-name-123.netlify.app`.
+6. Optional: set a custom domain under **Domain settings**.
